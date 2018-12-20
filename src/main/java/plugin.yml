@@ -1,0 +1,4 @@
+name: Robots
+version: 1
+authors: [Tom, Chris]
+main: blue.sparse.robots.RobotsPlugin

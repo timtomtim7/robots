@@ -1,0 +1,17 @@
+plugins {
+    id 'java'
+}
+
+group 'blue.sparse'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    flatDir { dir "versions" }
+}
+
+dependencies {
+    compile name: "spigot-1.8.8"
+}
