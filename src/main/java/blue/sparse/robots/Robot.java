@@ -85,6 +85,10 @@ public final class Robot {
 		return nms.getLocation();
 	}
 
+	public Location getEyeLocation() {
+		return nms.getEyeLocation();
+	}
+
 	public static Skin getDefaultSkin() {
 		try {
 			final InputStream resource = RobotsPlugin.getInstance().getResource("default.skin");

@@ -152,7 +152,7 @@ public class Pathfinder {
 				target.add(current.block);
 				current = current.parent;
 			}
-//			reconstructPath(world, target);
+			Collections.reverse(target);
 			return target;
 		}
 

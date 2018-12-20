@@ -11,7 +11,7 @@ public class TaskFollowPath extends Task {
 
 	private List<Block> path;
 	private int i = 0;
-	private int ticks = 0;
+	private float progress = 0f;
 
 	public TaskFollowPath(Robot robot, List<Block> path) {
 		super(robot);
@@ -29,13 +29,22 @@ public class TaskFollowPath extends Task {
 		final Location a = current.getLocation().add(0.5, 0.0, 0.5);
 		final Location b = next.getLocation().add(0.5, 0.0, 0.5);
 
-		float progress = ticks / 5f;
 		final Location newLocation = b.clone().subtract(a).multiply(progress).add(a);
+
+		final Vector direction = newLocation
+				.toVector()
+				.add(new Vector(0.0, 1.62, 0.0))
+				.subtract(robot.getEyeLocation().toVector())
+				.normalize();
+
+		newLocation.setDirection(direction);
 		robot.shortRangeTeleport(newLocation);
 
-		ticks++;
-		if(progress >= 1f)
-			ticks = 0;
+		progress += 0.2f;
+		if(progress >= 1f) {
+			i++;
+			progress %= 1f;
+		}
 	}
 
 	@Override
