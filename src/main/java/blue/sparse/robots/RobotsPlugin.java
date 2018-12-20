@@ -1,10 +1,10 @@
 package blue.sparse.robots;
 
+import blue.sparse.robots.command.RobotsCommand;
+import blue.sparse.robots.listener.PlayerInteractListener;
 import blue.sparse.robots.util.ErrorHandler;
 import blue.sparse.robots.version.VersionAdapter;
 import org.bukkit.Bukkit;
-import blue.sparse.robots.command.RobotsCommand;
-import blue.sparse.robots.listener.PlayerInteractListener;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
@@ -17,6 +17,7 @@ public final class RobotsPlugin extends JavaPlugin {
 	private static VersionAdapter versionAdapter;
 	private static ErrorHandler errorHandler;
 	private static RobotsPlugin instance;
+	private YamlConfiguration messagesConfig;
 
 	private static String getVersion() {
 		return Bukkit
@@ -28,6 +29,10 @@ public final class RobotsPlugin extends JavaPlugin {
 
 	}
 
+	public static VersionAdapter getVersionAdapter() {
+		return versionAdapter;
+	}
+
 	public static RobotsPlugin getInstance() {
 		return instance;
 	}
@@ -35,8 +40,6 @@ public final class RobotsPlugin extends JavaPlugin {
 	public static void error(Throwable error) {
 		errorHandler.logError(error);
 	}
-
-	private YamlConfiguration messagesConfig;
 
 	@Override
 	public void onEnable() {
@@ -66,6 +69,8 @@ public final class RobotsPlugin extends JavaPlugin {
 
 		registerCommand(RobotsCommand.class);
 		registerListener(PlayerInteractListener.class);
+
+		getServer().getScheduler().scheduleSyncRepeatingTask(this, Robot::tickAll, 1L, 1L);
 	}
 
 	public YamlConfiguration getMessagesConfig() {
@@ -75,7 +80,7 @@ public final class RobotsPlugin extends JavaPlugin {
 	private YamlConfiguration loadConfiguration(String name) {
 		File file = new File(getDataFolder(), name);
 
-		if(!file.exists()) {
+		if (!file.exists()) {
 			saveResource(name, false);
 		}
 

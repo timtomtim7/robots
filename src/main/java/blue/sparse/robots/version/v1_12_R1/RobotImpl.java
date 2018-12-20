@@ -10,8 +10,6 @@ import net.minecraft.server.v1_12_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
@@ -20,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
@@ -42,6 +41,17 @@ public class RobotImpl implements RobotNMS {
 
 		nms = new EntityPlayer(nmsServer, nmsWorld, profile, new PlayerInteractManager(nmsWorld));
 		nms.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+
+		try {
+			final Field field = EntityHuman.class.getDeclaredField("br");
+			field.setAccessible(true);
+
+			@SuppressWarnings("unchecked") final DataWatcherObject<Byte> value = (DataWatcherObject<Byte>) field.get(null);
+			nms.getDataWatcher().set(value, (byte) 0xFF);
+
+		} catch (ReflectiveOperationException e) {
+			RobotsPlugin.error(e);
+		}
 	}
 
 	@Override
@@ -52,7 +62,7 @@ public class RobotImpl implements RobotNMS {
 
 		Bukkit.getScheduler().scheduleSyncDelayedTask(RobotsPlugin.getInstance(), () -> {
 			sendPacket(player, new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, nms));
-		});
+		}, 20L);
 	}
 
 	@Override

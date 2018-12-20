@@ -2,6 +2,8 @@ package blue.sparse.robots.command;
 
 import blue.sparse.robots.RobotItem;
 import blue.sparse.robots.RobotsPlugin;
+import blue.sparse.robots.util.Skin;
+import blue.sparse.robots.version.VersionAdapter;
 import com.google.common.primitives.Ints;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -9,6 +11,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+
+import java.io.File;
+import java.io.IOException;
 
 import static blue.sparse.robots.util.MessageUtil.color;
 import static blue.sparse.robots.util.MessageUtil.sendMessage;
@@ -63,6 +68,18 @@ public class RobotsCommand implements CommandExecutor {
 				sender.sendMessage(color("&bGiven " + playerName + " " + amount + " robot!"));
 			else
 				sender.sendMessage(color("&bGiven " + playerName + " " + amount + " robots!"));
+		}
+
+		if (args[0].equalsIgnoreCase("saveSkin")) {
+			Player player = (Player) sender;
+			try {
+				final Skin skin = VersionAdapter.getInstance().getSkin(player);
+				if(skin != null) {
+					skin.writeToFile(new File(RobotsPlugin.getInstance().getDataFolder(), "test.skin"));
+				}
+			} catch (IOException e) {
+				RobotsPlugin.error(e);
+			}
 		}
 
 		return true;
