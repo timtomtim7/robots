@@ -33,17 +33,21 @@ public class RobotsCommand implements CommandExecutor {
 			return true;
 		}
 
+		/*
+			args[0] = "give"
+			args[1] = playerName?
+			args[2] = amount?
+		 */
 		if (args[0].equalsIgnoreCase("give")) {
-			if (args.length < 2) {
-				sendMessage(sender, "comands.robot.expecting-player");
-				return true;
+			Player player = null;
+			if(sender instanceof Player) {
+				player = (Player) sender;
+			}else if(args.length >= 2) {
+				player = plugin.getServer().getPlayer(args[1]);
 			}
 
-			String playerName = args[1];
-			Player player = plugin.getServer().getPlayer(playerName);
-
 			if (player == null) {
-				sender.sendMessage(color("&c&l" + playerName + " &cisn't online."));
+				sendMessage(sender, "comands.robot.expecting-player");
 				return true;
 			}
 
@@ -54,7 +58,8 @@ public class RobotsCommand implements CommandExecutor {
 				amount = Ints.tryParse(amountString);
 
 				if (amount == null) {
-					sender.sendMessage(color("&c&l'" + amountString + "' &cis not a valid amount."));
+					sendMessage(sender, "commands.robot.give.invalid-amount");
+//					sender.sendMessage(color("&c&l'" + amountString + "' &cis not a valid amount."));
 					return true;
 				}
 			}
@@ -64,10 +69,11 @@ public class RobotsCommand implements CommandExecutor {
 			for (int i = 0; i < amount; i++) {
 				inventory.addItem(RobotItem.create());
 			}
-			if (amount == 1)
-				sender.sendMessage(color("&bGiven " + playerName + " " + amount + " robot!"));
-			else
-				sender.sendMessage(color("&bGiven " + playerName + " " + amount + " robots!"));
+			sendMessage(
+					sender, "commands.robot.give.given",
+					"player", player.getName(),
+					"amount", amount.toString()
+			);
 		}
 
 		if (args[0].equalsIgnoreCase("saveSkin")) {

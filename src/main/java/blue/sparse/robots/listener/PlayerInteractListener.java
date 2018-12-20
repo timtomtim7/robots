@@ -2,11 +2,11 @@ package blue.sparse.robots.listener;
 
 import blue.sparse.robots.Robot;
 import blue.sparse.robots.RobotItem;
-import blue.sparse.robots.RobotsPlugin;
-import blue.sparse.robots.util.Skin;
-import blue.sparse.robots.version.RobotNMS;
-import blue.sparse.robots.version.VersionAdapter;
+import blue.sparse.robots.pathfinding.Pathfinder;
+import blue.sparse.robots.task.TaskFollowPath;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,10 +14,11 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.List;
 
 public class PlayerInteractListener implements Listener {
+
+	private Block start;
 
 	@EventHandler
 	public void onInteract(PlayerInteractEvent event) {
@@ -29,16 +30,29 @@ public class PlayerInteractListener implements Listener {
 			return;
 		event.setCancelled(true);
 
-		player.getInventory().remove(item);
-		Location robotSpawnLocation = event.getClickedBlock().getRelative(event.getBlockFace()).getLocation();
-		//TODO: Spawn real robot here
+//		player.getInventory().remove(item);
+		Block robotSpawnLocation = event.getClickedBlock().getRelative(event.getBlockFace());
 
-		final Robot robot = new Robot(player, "Robot", robotSpawnLocation);
+		if (start == null) {
+			start = robotSpawnLocation;
+		} else {
+			Block goal = robotSpawnLocation;
+			final List<Block> path = Pathfinder.find(start, goal);
 
-//		Slime slime = robotSpawnLocation.getWorld().spawn(robotSpawnLocation, Slime.class);
-//		slime.setSize(5);
-//		slime.setCustomNameVisible(true);
-//		slime.setCustomName(color("&b&lTOM THE DESTROYER"));
-//		event.setCancelled(true);
+			if(path == null || path.isEmpty()) {
+				player.sendMessage("No path");
+				return;
+			}
+
+			final Robot robot = new Robot(player, "Robot", start.getLocation());
+			robot.setTask(new TaskFollowPath(robot, path));
+			start = null;
+
+//			path.forEach(block -> player.sendBlockChange(block.getLocation(), Material.STAINED_GLASS, (byte)0));
+//			path.forEach(block -> block.setType(Material.STAINED_GLASS));
+		}
+
+
+
 	}
 }

@@ -1,5 +1,6 @@
 package blue.sparse.robots;
 
+import blue.sparse.robots.task.Task;
 import blue.sparse.robots.util.Skin;
 import blue.sparse.robots.version.RobotNMS;
 import blue.sparse.robots.version.VersionAdapter;
@@ -21,6 +22,8 @@ public final class Robot {
 
 	private Set<Player> visibleTo = new HashSet<>();
 
+	private Task task;
+
 	private Stream<Player> getNearbyPlayers() {
 		final Location location = getLocation();
 		final Location playerLocation = getLocation();
@@ -34,6 +37,14 @@ public final class Robot {
 		ownerID = owner.getUniqueId();
 		nms = VersionAdapter.getInstance().spawnRobot(name, getDefaultSkin(), location);
 		robots.add(this);
+	}
+
+	public void teleport(Location location) {
+		nms.teleport(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+	}
+
+	public void shortRangeTeleport(Location location) {
+		nms.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 	}
 
 	public void onTick() {
@@ -52,7 +63,23 @@ public final class Robot {
 
 		notVisible.forEach(player -> nms.setInvisible(player));
 		visibleTo.removeAll(notVisible);
+
+		if(task != null) {
+			if(task.isDone())
+				task = null;
+			else
+				task.onTick();
+		}
 	}
+
+	public Task getTask() {
+		return task;
+	}
+
+	public void setTask(Task task) {
+		this.task = task;
+	}
+
 
 	public Location getLocation() {
 		return nms.getLocation();
