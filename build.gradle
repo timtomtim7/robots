@@ -15,3 +15,7 @@ repositories {
 dependencies {
     compile name: "spigot-1.8.8"
 }
+
+jar {
+    jar.archiveName = "${project.name}.jar"
+}

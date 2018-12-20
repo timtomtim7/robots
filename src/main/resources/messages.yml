@@ -1,0 +1,9 @@
+commands:
+  robot:
+    help-menu:
+      - "&8» &b&lRobots Commands &8«"
+      - ""
+      - "&b/robots give {player} [amount]"
+      - "    &7Gives the target player a robot with an optional desired amount."
+    expecting-player:
+      - "&cExpecting the name of an online player!"
