@@ -2,8 +2,3 @@ name: Robots
 version: 1
 authors: [Tom, Chris]
 main: blue.sparse.robots.RobotsPlugin
-commands:
-  robots:
-    description: Admin base command for the plugin.
-    aliases: ["robot"]
-    usage: /robots
