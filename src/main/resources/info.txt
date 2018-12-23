@@ -1,0 +1,37 @@
+Tasks [
+
+    Robots have a list of tasks that it can carry out.
+    A robot figures out what it should be doing per situation on it's own,
+    it has a mind of it's own and should know how to help when you need it.
+    Some of the things it could be able to aid a player in are:
+    * Mining - if a player starts mining, the robot should know how to help.
+    * Killing - if a player is engaging in PvP/PvE, the robot should understand this and help.
+    * Farming - If a player is breaking crops or placing crops, the robot should help.
+    * Tree Chopping - If a player is chopping trees down, the robot should chop nearby trees down as well.
+
+    Some tasks are rather arbitrary. He'll play these tasks out when the player
+    isn't doing something that the robot knows he should help, like when the robot
+    is just kind of wandering around. Some of these could be:
+    * Chest Organization - It could organize nearby chests.
+
+    Some tasks are more "demands" by the player that the robot should carry out.
+    Some of these demands could be:
+    * Crafting - The player could ask the robot to craft it a diamond sword with materials either given to it or from
+    materials collected from nearby inventories.
+    * Item Requests - The player could ask the robot to get it some dirt and the robot would go find items from nearby
+    inventories and return them to the player.
+
+    * Enchantment Requests - The player could ask the robot to enchant an item they are holding and the robot would
+    find the nearest enchantment table and enchant it with the highest level possible.
+
+]
+
+Controlling the Robot [
+
+    Robots would be interacted with through chat.
+    The player would address the robot by saying his name and his request, like..
+    "Hey Tom, can you please enchant this diamond sword for me?" - this would trigger the robot to enact on it's Enchantment Request task.
+    "Tom, I need some dirt." - this would trigger the robot to enact on it's Item Requests task.
+
+
+]

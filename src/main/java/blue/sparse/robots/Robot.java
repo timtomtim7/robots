@@ -1,6 +1,8 @@
 package blue.sparse.robots;
 
 import blue.sparse.robots.task.Task;
+import blue.sparse.robots.task.TaskAttackNearby;
+import blue.sparse.robots.util.Animation;
 import blue.sparse.robots.util.Skin;
 import blue.sparse.robots.version.RobotNMS;
 import blue.sparse.robots.version.VersionAdapter;
@@ -47,29 +49,12 @@ public final class Robot {
 		nms.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 	}
 
-	public void onTick() {
-		final Set<Player> players = getNearbyPlayers().collect(Collectors.toSet());
+	private void onTick() {
+		handleVisibility();
+		handleTasks();
+		if(getTask() == null || getTask().isDone())
+			setTask(new TaskAttackNearby(this));
 
-		final Set<Player> newVisible = new HashSet<>(players);
-		newVisible.removeAll(visibleTo);
-		newVisible.removeIf(player -> System.currentTimeMillis() - player.getLastPlayed() < 10000L);
-
-		final Set<Player> notVisible = new HashSet<>(visibleTo);
-		notVisible.removeAll(players);
-		notVisible.removeIf(player -> !player.isOnline());
-
-		newVisible.forEach(player -> nms.setVisible(player));
-		visibleTo.addAll(newVisible);
-
-		notVisible.forEach(player -> nms.setInvisible(player));
-		visibleTo.removeAll(notVisible);
-
-		if(task != null) {
-			if(task.isDone())
-				task = null;
-			else
-				task.onTick();
-		}
 	}
 
 	public Task getTask() {
@@ -99,7 +84,38 @@ public final class Robot {
 		}
 	}
 
+	public void animate(Animation animation) {
+		nms.animate(animation);
+	}
+
 	private static Set<Robot> robots = new HashSet<>();
+
+	private void handleTasks() {
+		if(task != null) {
+			if(task.isDone())
+				task = null;
+			else
+				task.onTick();
+		}
+	}
+
+	private void handleVisibility() {
+		final Set<Player> players = getNearbyPlayers().collect(Collectors.toSet());
+
+		final Set<Player> newVisible = new HashSet<>(players);
+		newVisible.removeAll(visibleTo);
+		newVisible.removeIf(player -> System.currentTimeMillis() - player.getLastPlayed() < 10000L);
+
+		final Set<Player> notVisible = new HashSet<>(visibleTo);
+		notVisible.removeAll(players);
+		notVisible.removeIf(player -> !player.isOnline());
+
+		newVisible.forEach(player -> nms.setVisible(player));
+		visibleTo.addAll(newVisible);
+
+		notVisible.forEach(player -> nms.setInvisible(player));
+		visibleTo.removeAll(notVisible);
+	}
 
 	static void tickAll() {
 		robots.forEach(Robot::onTick);
